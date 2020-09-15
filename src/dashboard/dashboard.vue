@@ -41,7 +41,7 @@
                   </v-menu>
                 </v-toolbar-items>
               </v-toolbar>
-              <v-card elevation="1" class="mx-auto" :style="`width: ${48+embed_width}px; min-height: 50vh; margin-top: -48px;`">
+              <v-card elevation="1" class="mx-auto" :style="`width: 1414px; height: 900px; margin-top: -48px;`">
                 <v-toolbar flat dense>
                   <v-tabs v-model="tabindex" :color="accentingColor">
                     <v-tab v-for="rp in reports" :key="`dashboard-report.nav.${rp.id}`" ripple>
@@ -50,12 +50,10 @@
                   </v-tabs>
                 </v-toolbar>
               
-                <v-card-text align="center" justify="center" class="fill-height pa-6">
+                <v-card-text align="center" justify="center" class="fill-height mx-auto">
                   <v-progress-circular v-if="loading" indeterminate rounded striped height="24" />
                   <iframe v-show="!loading" v-if="selected && selected.id" @load="loading=false;"
-                    frameborder="0" style="border:0;" allowfullscreen
-                    :width="embed_width"
-                    :height="embed_height"
+                    frameborder="0" style="width: 1366px; height: 792px; border:0;" allowfullscreen
                     :src="embed_location">
                   </iframe>
                   <v-alert v-else text>리포트를 선택해 주세요</v-alert>
@@ -64,7 +62,7 @@
               <v-card-actions>
                 <v-spacer />
               </v-card-actions>
-              <v-footer>
+              <v-footer dark :color="accentColor">
                 &copy; PengtaiKorea. MDG.
               </v-footer>
             </v-card>

@@ -1,9 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import routes from '@/views/routes'
-
-
-Vue.use(VueRouter);
-
-export default new VueRouter({ routes });
+export default (function(options) {
+  Vue.use(VueRouter);
+  return new VueRouter(options);
+});
