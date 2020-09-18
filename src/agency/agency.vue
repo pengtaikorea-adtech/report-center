@@ -1,4 +1,6 @@
 <template>
+  <router-view />
+  <!--
   <v-app id="agency">
     <v-navigation-drawer app v-if="navigation" v-model="show_drawer">
       <v-list-item>
@@ -40,6 +42,7 @@
       </v-container>
     </v-main>
   </v-app>
+  -->
 </template>
 <script>
 import routes from './routes'
