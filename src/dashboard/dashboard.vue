@@ -41,7 +41,7 @@
                   </v-menu>
                 </v-toolbar-items>
               </v-toolbar>
-              <v-card elevation="1" class="mx-auto" :style="`width: 1414px; height: 900px; margin-top: -48px;`">
+              <v-card elevation="1" class="mx-auto mt-n12" style="max-width: 1400px; max-height: 900px;">
                 <v-toolbar flat dense>
                   <v-tabs v-model="tabindex" :color="accentingColor">
                     <v-tab v-for="rp in reports" :key="`dashboard-report.nav.${rp.id}`" ripple>
@@ -51,9 +51,15 @@
                 </v-toolbar>
               
                 <v-card-text align="center" justify="center" class="fill-height mx-auto">
-                  <v-progress-circular v-if="loading" indeterminate rounded striped height="24" />
-                  <iframe v-show="!loading" v-if="selected && selected.id" @load="loading=false;"
-                    frameborder="0" style="width: 1366px; height: 792px; border:0;" allowfullscreen
+                  <v-progress-circular 
+                    v-if="loading" 
+                    class="mx-auto my-12"
+                    indeterminate rounded striped />
+                  <iframe ref="main_frame"
+                    v-show="!loading" v-if="selected && selected.id" 
+                    v-resize="on_frame_resized"
+                    @load="loading=false;"
+                    width="100%" border="0" frameborder="0" allowfullscreen
                     :src="embed_location">
                   </iframe>
                   <v-alert v-else text>리포트를 선택해 주세요</v-alert>
@@ -62,7 +68,7 @@
               <v-card-actions>
                 <v-spacer />
               </v-card-actions>
-              <v-footer dark :color="accentColor">
+              <v-footer dark :color="accentingColor">
                 &copy; PengtaiKorea. MDG.
               </v-footer>
             </v-card>
@@ -91,7 +97,10 @@ const reportPresets = [
 export default {
   name: 'App',
   watch: {
-    tabindex() { this.loading=true; }
+    tabindex() { 
+      this.on_frame_resized();
+      this.loading=true; 
+    }
   },
   mounted() {
     // filtered index first
@@ -117,6 +126,16 @@ export default {
         return ''
       }
     },
+    on_frame_resized() {
+      // this.loading = false;
+      const std_width = 1366;
+      const std_height = 768;
+      const bottom_bar_padding = 24;
+      let actual_width = this.$refs.main_frame.offsetWidth;
+      let aspect_ratio = (this.selected.h || std_height) / (this.selected.w || std_width);
+      let computed_height = actual_width*aspect_ratio + bottom_bar_padding;
+      this.$refs.main_frame.height = `${computed_height}px`;
+    }
   },
   computed: {
     selected() {
@@ -130,10 +149,10 @@ export default {
       return location;
     },
     embed_width() {
-      return Math.min(window.innerWidth, this.selected.w || 1366);
+      return Math.min(window.innerWidth - 80, this.selected.w || 1366);
     },
     embed_height() {
-      return 24 + this.embed_width * (this.selected.h || 768) / this.embed_width;
+      return 24 + (this.embed_width * (this.selected.h || 768) / (this.selected.w || 1366));
     },
   },
   data() {

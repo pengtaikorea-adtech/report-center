@@ -21,10 +21,36 @@
 </template>
 
 <script>
-import dummy_campaigns from './dummy'
+const dummy_campaigns = [
+  { title: '8K Playground', 
+    name: 'playground8k',
+    landings: ['https://www.samsung.com/sec/8k/playground/'],
+    tags: ['t1', 'Lois'],  },
+  { title: '비스포크 웨딩샵', 
+    tags: ['t3', 'Peach'], 
+    landings: ['https://www.samsung.com/sec/eventList/bespoke'], },
+  { title: 'TV 보상판매', 
+    tags: ['t1', 'Erin'], 
+    landings: ['https://www.samsung.com/sec/eventList/tv_tradein'], },
+  { title: '갤럭시20', 
+    tags: ['t1', 'Jade'], 
+    landings: ['https://www.samsung.com/sec/event/galaxy20-launch', 'https://www.samsung.com/sec/event/galaxy20-preview'] }, 
+].map((c,i)=>Object.assign({id:i+1}, c));
 
 export default {
   name: 'campaigns',
+  mounted() {
+    // 
+    this.$store.commit('transition', [
+      'Campaigns',
+      { title: 'Campaigns',
+        tags: [['t1','t2','t3'], ['Peach','Lois','Erin','Jade']],
+        text_key: 'title',
+        items: dummy_campaigns,
+      }
+    ])
+
+  },
   computed: {
     candidates() {
       return [];
