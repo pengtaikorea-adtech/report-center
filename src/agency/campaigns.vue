@@ -56,9 +56,9 @@
       <container-single>
         <v-card flat>
           <!-- campaign toolbar -->
-          <v-toolbar elevation="1" >
+          <v-toolbar elevation="1" dark dense>
             <v-toolbar-title>
-              {{ the_campaign ? the_campaign.title : 'No Campaign' }}
+              {{ the_campaign ? the_campaign.name : 'No Campaign' }}
             </v-toolbar-title>
             <v-spacer />
             <v-toolbar-items v-if="the_campaign">
@@ -69,22 +69,20 @@
               </v-tabs>
             </v-toolbar-items>
           </v-toolbar>
-          <v-card-text>
-            <template v-if="the_campaign">
-              <template v-for="(comp,ci) in ['info','media','report']">
-                <component v-show="tabindex==ci" :key="`campaign-main.${ci}.${campaign_selected_id}`" :is="`campaign-${comp}`"
-                  :campaign.sync="the_campaign"
-                  :teams.sync="teams_raw"
-                  :members.sync="members_raw"
-                  :tagnames.sync="tags_raw"
-                />
-              </template>
+          <template v-if="the_campaign">
+            <template v-for="(comp,ci) in ['info','media','report']">
+              <component v-show="tabindex==ci" :key="`campaign-main.${ci}.${campaign_selected_id}`" :is="`campaign-${comp}`"
+                :campaign.sync="the_campaign"
+                :teams.sync="teams_raw"
+                :members.sync="members_raw"
+                :tagnames.sync="tags_raw"
+              />
             </template>
-            <!-- no campaign selected -->
-            <template v-else>
-              선택한 캠페인이 없습니다
-            </template>
-          </v-card-text>
+          </template>
+          <!-- no campaign selected -->
+          <template v-else>
+            선택한 캠페인이 없습니다
+          </template>
         </v-card>
       </container-single>
     </v-main>
