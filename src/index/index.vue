@@ -37,7 +37,7 @@ export default {
   },
   data() {
     return {
-      mode_debug: /localhost:808\d/.test(window.location.host),
+      mode_debug: true,
     };
   }
 }
