@@ -3,7 +3,7 @@
       <v-row>
         <v-col md="6">
           <tool-card :toolProps="{dark:true, color:'primary', flat: true}">
-            <template #card.tools.title>{{ title }} Status</template>
+            <template #card.tools.title>Campaign Status</template>
             <!-- default slot contents -->
             <v-card-text>
               <apexchart :options="chart.topBars" :series="serieses.topBars" />
@@ -16,69 +16,86 @@
         </v-col>
         <v-col md="6">
           <tool-card :toolProps="{dark: true, color: 'secondary', flat: true}">
-            <template #card.tools.title>Settings</template>
+            <template #card.tools.title>Campaign Settings</template>
             <!-- default slot -->
             <v-card-text>
-              <v-form>
-                <v-subheader>캠페인 기본 설정</v-subheader>
-                <v-text-field label="캠페인명" v-model="title" />
-                <v-input>
-                  <v-text-field type="date" label="시작일" v-model="period_from" />
-                  <span class="mx-4"> ~ </span>
-                  <v-text-field type="date" label="종료일" v-model="period_till" />
-                </v-input>
-                <v-text-field label="총 예산 (KRW)" type="text" v-model="budget_text" />
-                <v-input>
-                  <v-select label="담당 팀" :items="teams" v-model="team" />
-                  <span class="mx-4">&nbsp;</span>
-                  <v-select label="담당자" :items="members" v-model="assignee" />
-                </v-input>
-
-                <v-divider />
-                
-                <v-subheader>LandingURL</v-subheader>
-                <v-input>
-                  <v-list>
-                    <v-list-item>
-                      <v-list-item-title>
-                        <v-text-field placeholder="https://new-landing-page-url" />
-                      </v-list-item-title>
-                      <v-list-item-action>
-                        <v-btn icon><v-icon small>mdi-plus-circle</v-icon></v-btn>
-                      </v-list-item-action>
-                    </v-list-item>
-                    <v-list-item style="max-width: 100%;" v-for="url in landings" :key="`camp.landing-${url}`">
-                      <v-list-item-title class="nowrap" :title="url">{{ url }}</v-list-item-title>
-                      <v-list-item-action>
-                        <v-btn icon><v-icon small>mdi-close-circle</v-icon></v-btn>
-                      </v-list-item-action>
-                    </v-list-item>
-                  </v-list>
-                </v-input>
-
-                <v-divider />
-                
-                <v-subheader>Contents</v-subheader>
-                <v-list>
-                  <v-list-item>
-                    <v-list-item-title>
-                      <v-input>
-                        <v-select :items="['text','image','slide','video']" />
-                        <span class="mx-4" />
-                        <v-text-field label="contentID" />
-                      </v-input>
-                    </v-list-item-title>
-                    <v-list-item-action>
-                      <v-btn icon><v-icon small>mdi-plus-circle</v-icon></v-btn>
-                    </v-list-item-action>
-                  </v-list-item>
-                  <v-divider />
-                </v-list>
-
-                <v-divider />
-                <v-subheader>Segments</v-subheader>
-
-              </v-form>
+              <v-expansion-panels flat dark mandatory popout elevation="1">
+                <!-- Settings: base -->
+                <v-expansion-panel>
+                  <v-expansion-panel-header>캠페인 기본 설정</v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <v-input>
+                      <v-text-field label="캠페인명" v-model="title" />
+                      <span class="mx-4" />
+                      <v-text-field label="총 예산 (KRW)" type="text" v-model="budget_text" />                    </v-input>
+                    <v-input>
+                      <v-select label="담당 팀" :items="teams" v-model="team" readonly />
+                      <span class="mx-4" />
+                      <v-select label="담당자" :items="members" v-model="assignee" />
+                    </v-input>
+                    <v-input>
+                      <v-text-field type="date" label="시작일" v-model="period_from" />
+                      <span class="mx-3"> ~ </span>
+                      <v-text-field type="date" label="종료일" v-model="period_till" />
+                    </v-input>
+                    <v-input>
+                      <v-text-field label="제품" v-model="product" />
+                      <span class="mx-4" />
+                      <v-select label="캠페인 단계" v-model="phase" :items="['ecommerce','promotion','retarget','launch','prelaunch',]" />
+                    </v-input>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+                <!-- Settings: LandingURL -->
+                <v-expansion-panel>
+                  <v-expansion-panel-header>LandingURL</v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <v-input>
+                      <v-textarea outlined v-model="landing_urls" />
+                    </v-input>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+                <!-- Settingns: Contents -->
+                <v-expansion-panel>
+                  <v-expansion-panel-header>Creatives</v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <v-list>
+                      <v-list-item>
+                        <v-list-item-title>
+                          <v-input>
+                            <v-select :items="['text','image','slide','video']" v-model="creative_edit.type" />
+                            <span class="mx-4" />
+                            <v-text-field label="contentID" v-model="creative_edit.id" />
+                          </v-input>
+                        </v-list-item-title>
+                        <v-list-item-action>
+                          <v-btn icon @click="creative_append"><v-icon small>mdi-plus-circle</v-icon></v-btn>
+                        </v-list-item-action>
+                      </v-list-item>
+                      <v-divider />
+                      <v-list-item v-for="(cr, ci) in creatives" :key="`campaign-creative.${ci}`" two-line dense>
+                        <v-list-item-content> 
+                          <v-list-item-title>
+                            {{ cr.id }}
+                          </v-list-item-title>
+                          <v-list-item-subtitle>
+                            {{ cr.type }}
+                          </v-list-item-subtitle>
+                        </v-list-item-content>
+                        <v-list-item-action>
+                          <v-btn icon @click="creative_subtract(ci)"><v-icon small>mdi-close-circle</v-icon></v-btn>
+                        </v-list-item-action>
+                      </v-list-item>
+                    </v-list>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+                <!-- Settings: Segments -->
+                <v-expansion-panel>
+                  <v-expansion-panel-header>Segments</v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <v-textarea v-model="segment_text" outlined />
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
             </v-card-text>
           </tool-card>
         </v-col>
@@ -99,6 +116,16 @@ export default {
     teams: Array,
     tagnames: Array,
   },
+  methods: {
+    creative_append() {
+      window.console.log(this.creative_edit);
+      this.creatives.push(Object.assign({}, this.creative_edit));
+      this.creative_edit = { id: null, type: null };
+    },
+    creative_subtract(index) {
+      this.creatives.splice(index, 1);
+    }
+  },
   computed: {
     spending() {
       return Math.round(this.budget * Math.random());
@@ -116,6 +143,9 @@ export default {
     landing_urls() {
       return this.landings.join('\n')
     },
+    segment_text() {
+      return (this.segments || []).join('\n')
+    }
   },
   data() {
     return Object.assign({
@@ -123,6 +153,10 @@ export default {
       period_from: '2020-09-01',
       period_till: '2020-09-30',
       budget: Math.round(10000*Math.random())*1e4,
+      creative_edit: {
+        id: null,
+        type: null,
+      },
       creatives: [],
       chart: chartOptions.dashboard,
       serieses: chartDummy.dashboard,
