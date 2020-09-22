@@ -19,6 +19,8 @@
             <template #card.tools.title>Campaign Settings</template>
             <!-- default slot -->
             <v-card-text>
+              <v-simple-table dark>
+              </v-simple-table>
               <v-expansion-panels flat dark mandatory popout elevation="1">
                 <!-- Settings: base -->
                 <v-expansion-panel>
@@ -45,9 +47,16 @@
                     </v-input>
                   </v-expansion-panel-content>
                 </v-expansion-panel>
+                <!-- Settings: Media -->
+                <v-expansion-panel>
+                  <v-expansion-panel-header>매체 Media</v-expansion-panel-header>
+                  <v-expansion-panel-content>
+
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
                 <!-- Settings: LandingURL -->
                 <v-expansion-panel>
-                  <v-expansion-panel-header>LandingURL</v-expansion-panel-header>
+                  <v-expansion-panel-header>랜딩 LandingURL</v-expansion-panel-header>
                   <v-expansion-panel-content>
                     <v-input>
                       <v-textarea outlined v-model="landing_urls" />
@@ -56,7 +65,7 @@
                 </v-expansion-panel>
                 <!-- Settingns: Contents -->
                 <v-expansion-panel>
-                  <v-expansion-panel-header>Creatives</v-expansion-panel-header>
+                  <v-expansion-panel-header>소재 Creatives</v-expansion-panel-header>
                   <v-expansion-panel-content>
                     <v-list>
                       <v-list-item>
@@ -90,7 +99,7 @@
                 </v-expansion-panel>
                 <!-- Settings: Segments -->
                 <v-expansion-panel>
-                  <v-expansion-panel-header>Segments</v-expansion-panel-header>
+                  <v-expansion-panel-header>세그먼트 Segments</v-expansion-panel-header>
                   <v-expansion-panel-content>
                     <v-textarea v-model="segment_text" outlined />
                   </v-expansion-panel-content>
