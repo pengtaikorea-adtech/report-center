@@ -1,14 +1,14 @@
 <template>
   <v-app id="campaigns">
     <!-- appbar -->
-    <v-app-bar app dark>
+    <v-app-bar app dark clipped-left>
       <v-toolbar-title @click="nav_visible = !nav_visible">
         <v-app-bar-nav-icon />
         Campaigns
       </v-toolbar-title>
     </v-app-bar>
     <!-- Navigations: select campaign -->
-    <v-navigation-drawer app v-model="nav_visible">
+    <v-navigation-drawer app v-model="nav_visible" clipped>
       <v-list-item @click="nav_filter_visible = !nav_filter_visible">
         <v-list-item-avatar><v-icon>mdi-filter</v-icon></v-list-item-avatar>
         <v-list-item-title>campaign filter</v-list-item-title>
@@ -37,7 +37,7 @@
         <template v-for="cpn in campaigns">
           <v-list-item two-line :key="`nav-campaign-${cpn.id}`" :value="cpn.id">
             <v-list-item-content>
-              <v-list-item-title>{{ cpn.title }}</v-list-item-title>
+              <v-list-item-title>[{{cpn.account}}] {{ cpn.title }}</v-list-item-title>
               <v-list-item-subtitle>
                 <v-chip x-small>#{{ cpn.team }} </v-chip>
                 <span v-for="a in cpn.assignee" :key="`nav-campaign-${cpn.id}-assigned.${a}`">
@@ -54,35 +54,37 @@
     </v-navigation-drawer>
     <v-main>
       <container-single>
-        <v-card flat>
+        <v-card flat v-if="the_campaign">
           <!-- campaign toolbar -->
-          <v-toolbar elevation="1" dark dense>
-            <v-toolbar-title>
-              {{ the_campaign ? the_campaign.name : 'No Campaign' }}
-            </v-toolbar-title>
-            <v-spacer />
-            <v-toolbar-items v-if="the_campaign">
-              <v-tabs v-model="tabindex">
-                <v-tab>Info</v-tab>
-                <v-tab>Media/CID</v-tab>
-                <v-tab>Report</v-tab>
-              </v-tabs>
-            </v-toolbar-items>
-          </v-toolbar>
-          <template v-if="the_campaign">
-            <template v-for="(comp,ci) in ['info','media','report']">
-              <component v-show="tabindex==ci" :key="`campaign-main.${ci}.${campaign_selected_id}`" :is="`campaign-${comp}`"
-                :campaign.sync="the_campaign"
-                :teams.sync="teams_raw"
-                :members.sync="members_raw"
-                :tagnames.sync="tags_raw"
-              />
-            </template>
-          </template>
-          <!-- no campaign selected -->
-          <template v-else>
-            선택한 캠페인이 없습니다
-          </template>
+          <v-card-title>
+            <v-toolbar flat dense>
+              <v-toolbar-title>[{{ the_campaign.account }}] {{ the_campaign.title }}</v-toolbar-title>
+              <v-spacer />
+              <v-toolbar-items>
+                <v-chip-group>
+                  <v-chip v-for="a in the_campaign.assignee" :key="`cmp.${the_campaign.id}-assignee.${a}`">{{ a }}</v-chip>
+                </v-chip-group>
+                <v-btn text readonly>
+                  #{{ the_campaign.team }}
+                </v-btn>
+              </v-toolbar-items>
+            </v-toolbar>
+          </v-card-title>
+          <v-card-text>
+            <v-expansion-panels popout focusable hover mandatory elevation="1" color="primary" >
+              <campaign-status :campaign.sync="the_campaign" :members.sync="members" :teams.sync="teams" />
+              <campaign-channels :campaign.sync="the_campaign" />
+              <campaign-report :campaign.sync="the_campaign" />
+            </v-expansion-panels>
+          </v-card-text>
+        </v-card>
+        <!-- no campaign selected -->
+        <v-card v-else>
+          <v-card-title dark color="primary">캠페인을 선택해 주세요</v-card-title>
+          <v-card-subtitle>please select a campaign</v-card-subtitle>
+          <v-card-text justify="center" align="center" style="min-height: 30vh;">
+            <strong>선택한 캠페인이 없습니다</strong>
+          </v-card-text>
         </v-card>
       </container-single>
     </v-main>
@@ -92,30 +94,34 @@
 <script>
 import navigationMenu from '@/components/navigationMenu'
 
-import campaignInfo from './campaignInfo'
-import campaignMedia from './campaignMedia'
-import campaignReport from './campaignReport'
+import campaignStatus from './campaign/status'
+import campaignChannels from './campaign/channels'
+import campaignReport from './campaign/report'
 
 const dummy_campaigns = [
-  { title: '8K Playground', 
+  { account: 'SEC',
+    title: '8K Playground', 
     name: 'playground8k',
     team: 't1',
     assignee: ['Lois'],
     landings: ['https://www.samsung.com/sec/8k/playground/'],
     tags: ['TV', '8K', 'QLED'] },
-  { title: '비스포크 웨딩샵', 
+  { account: 'SEC',
+    title: '비스포크 웨딩샵', 
     name: 'bespoke_wed',
     team: 't3',
     assignee: ['Peach'],
     landings: ['https://www.samsung.com/sec/eventList/bespoke'], 
     tags: ['냉장고','주방가전','Bespoke','웨딩','프로모션'] },
-  { title: 'TV 보상판매', 
+  { account: 'SEC',
+    title: 'TV 보상판매', 
     name: 'tv_tradein',
     team: 't1',
     assignee: ['Erin'],
     landings: ['https://www.samsung.com/sec/eventList/tv_tradein'], 
     tags: ['TV','보상판매','8K']},
-  { title: '갤럭시20', 
+  { account: 'SEC',
+    title: '갤럭시20', 
     name: 'galaxy-s20_launch',
     team: 't1',
     assignee: ['Jade'],
@@ -127,8 +133,9 @@ export default {
   name: 'campaigns',
   components: {
     navigationMenu,
-    campaignInfo,
-    campaignMedia,
+
+    campaignStatus,
+    campaignChannels,
     campaignReport,
   },
   watch: {

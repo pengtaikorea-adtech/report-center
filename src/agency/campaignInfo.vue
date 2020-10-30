@@ -29,7 +29,8 @@
                     <v-input>
                       <v-text-field label="캠페인명" v-model="title" />
                       <span class="mx-4" />
-                      <v-text-field label="총 예산 (KRW)" type="text" v-model="budget_text" />                    </v-input>
+                      <v-text-field label="총 예산 (KRW)" type="text" v-model="budget_text" />
+                    </v-input>
                     <v-input>
                       <v-select label="담당 팀" :items="teams" v-model="team" readonly />
                       <span class="mx-4" />
